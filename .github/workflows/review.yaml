@@ -10,17 +10,16 @@ jobs:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0 # Ensures you have the full history for diffing
-    - name: Show changed files
+    - name: Fetch Base and Head Branches
       run: |
-        git diff --name-only ${{ github.event.before }} ${{ github.event.after }}
-    - name: Get changed files
-      id: set-changed-files
+        git fetch origin ${{ github.base_ref }}:${{ github.base_ref }}
+        git fetch origin ${{ github.head_ref }}:${{ github.head_ref }}
+    - name: Determine Changed Files
       run: |
-         git diff --name-only ${{ github.event.before }} ${{ github.event.after }} > changed_files.txt
+        echo "file_list=$(git diff --name-only ${{ github.base_ref }} ${{ github.head_ref }})" >> $GITHUB_ENV
     - name: Ask Michael to review my code
       uses: micmmakarov/reviewer@main
       with:
-        file-list: |
-          cat ${{ github.workspace }}/changed_files.txt
+        file-list: ${{ env.file_list }}
         github-token: ${{ secrets.THE_GITHUB_TOKEN }}
         openai-token: ${{ secrets.OPENAI_TOKEN }}
