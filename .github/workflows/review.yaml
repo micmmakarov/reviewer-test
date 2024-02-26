@@ -13,8 +13,7 @@ jobs:
       id: set-changed-files
       run: |
         git diff --name-only ${{ github.event.before }} ${{ github.event.after }} > changed_files.txt
-        echo "changed-files=$(cat changed_files.txt)" >> $GITHUB_ENV
-
+        echo "::set-output name=changed-files::$(cat changed_files.txt)"
     - name: Ask Michael to review my code
       uses: micmmakarov/reviewer@main
       with:
