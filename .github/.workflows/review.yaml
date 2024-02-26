@@ -1,0 +1,23 @@
+name: Ask Michael to review my code
+on: [push]
+
+jobs:
+  process-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      changed-files: ${{ steps.set-changed-files.outputs.changed-files }}
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Get changed files
+      id: set-changed-files
+      run: |
+        git diff --name-only ${{ github.event.before }} ${{ github.event.after }} > changed_files.txt
+        echo "changed-files=$(cat changed_files.txt)" >> $GITHUB_ENV
+
+    - name: Ask Michael to review my code
+      uses: micmmakarov/reviewer@main
+      with:
+        file-list: ${{ steps.set-changed-files.outputs.changed-files }}
+        github-token: ${{ secrets.THE_GITHUB_TOKEN }}
+        openai-token: ${{ secrets.OPENAI_TOKEN }}
