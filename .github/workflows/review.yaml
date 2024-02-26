@@ -12,7 +12,7 @@ jobs:
         fetch-depth: 0 # Ensures you have the full history for diffing
     - name: Show changed files
       run: |
-        git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargsgit diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs
+        git diff --name-only ${{ github.event.before }} ${{ github.event.after }}
     - name: Get changed files
       id: set-changed-files
       run: |
