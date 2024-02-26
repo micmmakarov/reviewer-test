@@ -13,13 +13,10 @@ jobs:
     - name: Show changed files
       run: |
         git diff --name-only ${{ github.event.before }} ${{ github.event.after }}
-    - name: Show changed files2
-      run: |
-        git diff --name-only origin/${{ github.base_ref }}...origin/${{ github.head_ref }}
     - name: Get changed files
       id: set-changed-files
       run: |
-        git diff --name-only origin/${{ github.base_ref }}...origin/${{ github.head_ref }} > changed_files.txt
+         git diff --name-only ${{ github.event.before }} ${{ github.event.after }} > changed_files.txt
     - name: Ask Michael to review my code
       uses: micmmakarov/reviewer@main
       with:
