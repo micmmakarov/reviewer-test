@@ -20,6 +20,7 @@ jobs:
     - name: Ask Michael to review my code
       uses: micmmakarov/reviewer@main
       with:
-        file-list: ${{ github.workspace }}/changed_files.txt
+        file-list: |
+          cat ${{ github.workspace }}/changed_files.txt
         github-token: ${{ secrets.THE_GITHUB_TOKEN }}
         openai-token: ${{ secrets.OPENAI_TOKEN }}
