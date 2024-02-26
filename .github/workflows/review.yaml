@@ -9,18 +9,23 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        fetch-depth: 0 # Ensures you have the full history for diffing
+        fetch-depth: 2 # Ensures you have the full history for diffing
     - name: Fetch Base and Head Branches
       run: |
         git fetch origin ${{ github.base_ref }}:${{ github.base_ref }}
         git fetch origin ${{ github.head_ref }}:${{ github.head_ref }}
     - name: Determine Changed Files
       run: |
-        echo "file_list=$(git diff --name-only ${{ github.base_ref }} ${{ github.head_ref }})" >> $GITHUB_ENV |
-        git diff --name-only ${{ github.base_ref }} ${{ github.head_ref }}
+        if [[ "${{ github.event.before }}" == "0000000000000000000000000000000000000000" ]]; then
+          # This is the first push or a force push to a new branch, consider all files
+          echo "CHANGED_FILES=$(git ls-tree -r --name-only HEAD | tr '\n' ' ')" >> $GITHUB_ENV
+        else
+          # Compare to the previous commit
+          echo "CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | tr '\n' ' ')" >> $GITHUB_ENV
+        fi
     - name: Ask Michael to review my code
       uses: micmmakarov/reviewer@main
       with:
-        file-list: ${{ env.file_list }}
+        file-list: ${{ env.CHANGED_FILES }}
         github-token: ${{ secrets.THE_GITHUB_TOKEN }}
         openai-token: ${{ secrets.OPENAI_TOKEN }}
