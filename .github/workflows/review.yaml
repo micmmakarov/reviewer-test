@@ -16,11 +16,11 @@ jobs:
         git fetch origin ${{ github.head_ref }}:${{ github.head_ref }}
     - name: Determine Changed Files
       run: |
-        echo "file_list=$(git diff --name-only ${{ github.base_ref }} ${{ github.head_ref }})" >> $GITHUB_ENV |
+        git diff --name-only ${{ github.base_ref }} ${{ github.head_ref }} > file_list.txt |
         git diff --name-only ${{ github.base_ref }} ${{ github.head_ref }}
     - name: Ask Michael to review my code
       uses: micmmakarov/reviewer@main
       with:
-        file-list: ${{ env.file_list }}
+        file-list: ${{ github.workspace }}/file_list.txt
         github-token: ${{ secrets.THE_GITHUB_TOKEN }}
         openai-token: ${{ secrets.OPENAI_TOKEN }}
